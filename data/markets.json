@@ -1,0 +1,6 @@
+[
+  { "id": 1, "name": "Assaí", "createdAt": "2026-08-04T12:00:00.000Z", "updatedAt": "2026-08-04T12:00:00.000Z" },
+  { "id": 2, "name": "Extra", "createdAt": "2026-08-04T12:00:00.000Z", "updatedAt": "2026-08-04T12:00:00.000Z" },
+  { "id": 3, "name": "Sonda", "createdAt": "2026-08-04T12:00:00.000Z", "updatedAt": "2026-08-04T12:00:00.000Z" },
+  { "id": 4, "name": "Carrefour", "createdAt": "2026-08-04T12:00:00.000Z", "updatedAt": "2026-08-04T12:00:00.000Z" }
+]

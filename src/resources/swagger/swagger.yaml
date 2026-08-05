@@ -1,0 +1,121 @@
+openapi: 3.0.3
+info:
+  title: Market Comparative API
+  version: 1.0.0
+  description: API REST para cadastro de produtos canônicos, preços e comparação entre supermercados.
+servers:
+  - url: http://localhost:3000/api/v1
+tags:
+  - name: Health
+    description: Monitoramento da disponibilidade da API.
+  - name: Markets
+    description: Consulta aos mercados cadastrados.
+  - name: Products
+    description: Gestão dos produtos canônicos.
+  - name: Prices
+    description: Cadastro, atualização e consulta de preços de produtos por mercado.
+  - name: Comparing
+    description: Comparação de preços entre mercados.
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Verifica a saúde da API
+      responses:
+        '200': { $ref: '#/components/responses/Health' }
+  /markets:
+    get:
+      tags: [Markets]
+      summary: Lista os mercados padrão
+      responses:
+        '200': { $ref: '#/components/responses/Markets' }
+  /products:
+    post:
+      tags: [Products]
+      summary: Cadastra um produto canônico
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/ProductInput' }, example: { name: Coca-Cola Original, category: Bebidas, available: true } } } }
+      responses:
+        '201': { $ref: '#/components/responses/Product' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+    get:
+      tags: [Products]
+      summary: Lista produtos, com busca opcional por nome
+      parameters:
+        - { name: search, in: query, schema: { type: string }, example: coca }
+      responses:
+        '200': { $ref: '#/components/responses/Products' }
+  /products/{id}/availability:
+    patch:
+      tags: [Products]
+      summary: Atualiza somente a disponibilidade do produto
+      parameters:
+        - { $ref: '#/components/parameters/ProductId' }
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [available], properties: { available: { type: boolean } } }, example: { available: false } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Product' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /prices:
+    post:
+      tags: [Prices]
+      summary: Cria o preço de um produto em um mercado
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PriceInput' }, example: { marketId: 1, productId: 1, price: 8.90 } } } }
+      responses:
+        '201': { $ref: '#/components/responses/Price' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+    get:
+      tags: [Prices]
+      summary: Lista preços com filtros opcionais
+      parameters:
+        - { name: marketId, in: query, schema: { type: integer, minimum: 1 } }
+        - { name: productId, in: query, schema: { type: integer, minimum: 1 } }
+      responses:
+        '200': { $ref: '#/components/responses/Prices' }
+  /prices/{id}:
+    patch:
+      tags: [Prices]
+      summary: Atualiza somente o valor de um preço
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer, minimum: 1 } }
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [price], properties: { price: { type: number, minimum: 0.01 } } }, example: { price: 9.50 } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Price' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /comparison:
+    get:
+      tags: [Comparing]
+      summary: Compara o preço de um produto disponível entre dois mercados
+      parameters:
+        - { name: originMarketId, in: query, required: true, schema: { type: integer, minimum: 1 } }
+        - { name: targetMarketId, in: query, required: true, schema: { type: integer, minimum: 1 } }
+        - { name: productId, in: query, required: true, schema: { type: integer, minimum: 1 } }
+      responses:
+        '200': { $ref: '#/components/responses/Comparison' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+components:
+  parameters:
+    ProductId: { name: id, in: path, required: true, schema: { type: integer, minimum: 1 } }
+  schemas:
+    Metadata: { type: object, properties: { timestamp: { type: string, format: date-time } } }
+    Market: { type: object, properties: { id: { type: integer, example: 1 }, name: { type: string, example: Assaí }, createdAt: { type: string, format: date-time }, updatedAt: { type: string, format: date-time } } }
+    Product: { type: object, properties: { id: { type: integer, example: 1 }, name: { type: string, example: Coca-Cola Original }, category: { type: string, example: Bebidas }, available: { type: boolean }, createdAt: { type: string, format: date-time }, updatedAt: { type: string, format: date-time } } }
+    Price: { type: object, properties: { id: { type: integer }, marketId: { type: integer }, productId: { type: integer }, price: { type: number, example: 8.9 }, createdAt: { type: string, format: date-time }, updatedAt: { type: string, format: date-time } } }
+    PriceListItem: { type: object, properties: { market: { type: object, properties: { id: { type: integer }, name: { type: string } } }, product: { type: object, properties: { id: { type: integer }, name: { type: string } } }, price: { type: number } } }
+    ProductInput: { type: object, required: [name, category, available], properties: { name: { type: string }, category: { type: string }, available: { type: boolean } } }
+    PriceInput: { type: object, required: [marketId, productId, price], properties: { marketId: { type: integer }, productId: { type: integer }, price: { type: number, format: float, minimum: 0.01, multipleOf: 0.01 } } }
+    Error: { type: object, required: [timestamp, status, error, message], properties: { timestamp: { type: string, format: date-time }, status: { type: integer }, error: { type: string }, message: { type: string } }, example: { timestamp: '2026-08-04T12:00:00.000Z', status: 400, error: Bad Request, message: 'Produto não encontrado.' } }
+  responses:
+    Health: { description: API saudável, content: { application/json: { schema: { type: object, properties: { data: { type: object, example: { status: UP } }, metadata: { $ref: '#/components/schemas/Metadata' } } } } } }
+    Markets: { description: Mercados, content: { application/json: { schema: { type: object }, example: { data: [{ id: 1, name: Assaí, createdAt: '2026-08-04T12:00:00.000Z', updatedAt: '2026-08-04T12:00:00.000Z' }], metadata: { timestamp: '2026-08-04T12:00:00.000Z' } } } } }
+    Product: { description: Produto, content: { application/json: { schema: { type: object, properties: { data: { $ref: '#/components/schemas/Product' }, metadata: { $ref: '#/components/schemas/Metadata' } } } } } }
+    Products: { description: Produtos, content: { application/json: { schema: { type: object, properties: { data: { type: array, items: { $ref: '#/components/schemas/Product' } }, metadata: { $ref: '#/components/schemas/Metadata' } } } } } }
+    Price: { description: Preço criado ou atualizado, content: { application/json: { schema: { type: object, properties: { data: { $ref: '#/components/schemas/Price' }, metadata: { $ref: '#/components/schemas/Metadata' } } } } } }
+    Prices: { description: Preços com mercado e produto, content: { application/json: { schema: { type: object, properties: { data: { type: array, items: { $ref: '#/components/schemas/PriceListItem' } }, metadata: { $ref: '#/components/schemas/Metadata' } } } } } }
+    Comparison: { description: Resultado da comparação, content: { application/json: { schema: { type: object }, example: { data: { product: { id: 1, name: Coca-Cola Original }, markets: [{ id: 1, name: Assaí, price: 8.9 }, { id: 2, name: Extra, price: 9.5 }], bestPrice: { marketId: 1, marketName: Assaí, price: 8.9, saving: 0.6 } }, metadata: { timestamp: '2026-08-04T12:00:00.000Z' } } } } }
+    BadRequest: { description: Dados inválidos ou entidade inexistente, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    NotFound: { description: Recurso não encontrado, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    Conflict: { description: Já existe preço para o mercado e produto, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    Unprocessable: { description: Mercado sem preço para o produto, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
