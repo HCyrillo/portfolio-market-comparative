@@ -1,0 +1,274 @@
+[
+  {
+    "id": 1,
+    "marketId": 1,
+    "productId": 1,
+    "priceInCents": 1000,
+    "createdAt": "2026-08-05T04:43:05.056Z",
+    "updatedAt": "2026-08-05T04:43:05.056Z"
+  },
+  {
+    "id": 2,
+    "marketId": 2,
+    "productId": 1,
+    "priceInCents": 1150,
+    "createdAt": "2026-08-05T04:43:36.200Z",
+    "updatedAt": "2026-08-05T04:43:36.200Z"
+  },
+  {
+    "id": 3,
+    "marketId": 1,
+    "productId": 2,
+    "priceInCents": 2890,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 4,
+    "marketId": 2,
+    "productId": 2,
+    "priceInCents": 3190,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 5,
+    "marketId": 3,
+    "productId": 2,
+    "priceInCents": 2990,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 6,
+    "marketId": 4,
+    "productId": 2,
+    "priceInCents": 3290,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 7,
+    "marketId": 1,
+    "productId": 3,
+    "priceInCents": 749,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 8,
+    "marketId": 2,
+    "productId": 3,
+    "priceInCents": 799,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 9,
+    "marketId": 3,
+    "productId": 3,
+    "priceInCents": 689,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 10,
+    "marketId": 4,
+    "productId": 3,
+    "priceInCents": 829,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 11,
+    "marketId": 1,
+    "productId": 4,
+    "priceInCents": 899,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 12,
+    "marketId": 2,
+    "productId": 4,
+    "priceInCents": 949,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 13,
+    "marketId": 3,
+    "productId": 4,
+    "priceInCents": 879,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 14,
+    "marketId": 4,
+    "productId": 4,
+    "priceInCents": 999,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 15,
+    "marketId": 1,
+    "productId": 5,
+    "priceInCents": 499,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 16,
+    "marketId": 2,
+    "productId": 5,
+    "priceInCents": 529,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 17,
+    "marketId": 3,
+    "productId": 5,
+    "priceInCents": 489,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 18,
+    "marketId": 4,
+    "productId": 5,
+    "priceInCents": 559,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 19,
+    "marketId": 1,
+    "productId": 6,
+    "priceInCents": 1790,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 20,
+    "marketId": 2,
+    "productId": 6,
+    "priceInCents": 1890,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 21,
+    "marketId": 3,
+    "productId": 6,
+    "priceInCents": 1690,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 22,
+    "marketId": 4,
+    "productId": 6,
+    "priceInCents": 1990,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 23,
+    "marketId": 1,
+    "productId": 7,
+    "priceInCents": 799,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 24,
+    "marketId": 2,
+    "productId": 7,
+    "priceInCents": 859,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 25,
+    "marketId": 3,
+    "productId": 7,
+    "priceInCents": 769,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 26,
+    "marketId": 4,
+    "productId": 7,
+    "priceInCents": 899,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 27,
+    "marketId": 1,
+    "productId": 8,
+    "priceInCents": 899,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 28,
+    "marketId": 2,
+    "productId": 8,
+    "priceInCents": 949,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 29,
+    "marketId": 3,
+    "productId": 8,
+    "priceInCents": 879,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 30,
+    "marketId": 4,
+    "productId": 8,
+    "priceInCents": 999,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 31,
+    "marketId": 1,
+    "productId": 9,
+    "priceInCents": 259,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 32,
+    "marketId": 2,
+    "productId": 9,
+    "priceInCents": 279,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 33,
+    "marketId": 3,
+    "productId": 9,
+    "priceInCents": 249,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 34,
+    "marketId": 4,
+    "productId": 9,
+    "priceInCents": 299,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  }
+]

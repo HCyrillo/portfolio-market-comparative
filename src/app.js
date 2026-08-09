@@ -18,7 +18,7 @@ const createApp = (options = {}) => {
   const swaggerDocument = YAML.load(`${__dirname}/resources/swagger/swagger.yaml`);
   app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
   app.use(express.json({ limit: '100kb' }));
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  app.use('/portfolio-market-comparative', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
   app.use(`${API_PREFIX}/health`, healthRoutes);
   app.use(`${API_PREFIX}/markets`, marketRoutes(container.marketService));
   app.use(`${API_PREFIX}/products`, productRoutes(container.productService));

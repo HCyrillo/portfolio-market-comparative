@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "name": "Pringles",
+    "category": "Salgadinho",
+    "available": false,
+    "createdAt": "2026-08-05T04:40:21.599Z",
+    "updatedAt": "2026-08-06T23:26:16.071Z"
+  },
+  {
+    "id": 2,
+    "name": "Arroz Tipo 1 5kg",
+    "category": "Mercearia",
+    "available": true,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 3,
+    "name": "Feijao Carioca 1kg",
+    "category": "Mercearia",
+    "available": true,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 4,
+    "name": "Coca-Cola Original 2L",
+    "category": "Bebidas",
+    "available": true,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 5,
+    "name": "Leite Integral 1L",
+    "category": "Laticinios",
+    "available": true,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 6,
+    "name": "Cafe Torrado e Moido 500g",
+    "category": "Mercearia",
+    "available": true,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 7,
+    "name": "Oleo de Soja 900ml",
+    "category": "Mercearia",
+    "available": true,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 8,
+    "name": "Pao de Forma 500g",
+    "category": "Padaria",
+    "available": true,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  },
+  {
+    "id": 9,
+    "name": "Detergente Neutro 500ml",
+    "category": "Limpeza",
+    "available": true,
+    "createdAt": "2026-08-06T12:00:00.000Z",
+    "updatedAt": "2026-08-06T12:00:00.000Z"
+  }
+]

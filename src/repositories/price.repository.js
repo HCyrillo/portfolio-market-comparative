@@ -1,9 +1,10 @@
+const path = require('path');
 const Price = require('../models/price.model');
 const { now } = require('../utils/date');
 const JsonDataStore = require('./json-data-store');
 
 class PriceRepository {
-  constructor(dataDirectory) { this.store = new JsonDataStore('prices.json', [], dataDirectory); }
+  constructor(dataDirectory = path.join(__dirname, '..', 'resources', 'data')) { this.store = new JsonDataStore('prices.json', [], dataDirectory); }
 
   async findById(id) { return (await this.store.read()).find((price) => price.id === id); }
   async findByMarketAndProduct(marketId, productId) { return (await this.store.read()).find((price) => price.marketId === marketId && price.productId === productId); }

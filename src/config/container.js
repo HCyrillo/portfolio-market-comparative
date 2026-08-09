@@ -7,7 +7,7 @@ const ProductService = require('../services/product.service');
 const PriceService = require('../services/price.service');
 const ComparisonService = require('../services/comparison.service');
 
-const buildContainer = ({ dataDirectory = process.env.DATA_DIR || path.join(process.cwd(), 'data') } = {}) => {
+const buildContainer = ({ dataDirectory = process.env.DATA_DIR || path.join(__dirname, '..', 'resources', 'data') } = {}) => {
   const marketService = new MarketService(new MarketRepository(dataDirectory));
   const productService = new ProductService(new ProductRepository(dataDirectory));
   const priceService = new PriceService(new PriceRepository(dataDirectory), marketService, productService);

@@ -1,9 +1,10 @@
+const path = require('path');
 const Product = require('../models/product.model');
 const { now } = require('../utils/date');
 const JsonDataStore = require('./json-data-store');
 
 class ProductRepository {
-  constructor(dataDirectory) { this.store = new JsonDataStore('products.json', [], dataDirectory); }
+  constructor(dataDirectory = path.join(__dirname, '..', 'resources', 'data')) { this.store = new JsonDataStore('products.json', [], dataDirectory); }
 
   async create({ name, category, available }) {
     const timestamp = now();
