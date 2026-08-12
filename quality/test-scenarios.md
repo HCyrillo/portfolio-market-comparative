@@ -46,6 +46,23 @@ A implementação dos testes automatizados será mantida separadamente no diret�
 | Não     | Cenário prioritariamente exploratório/manual |
 | Avaliar | Automação depende do custo/benefício         |
 
+### Heurísticas
+
+A análise de cenários também considera heurísticas de exploração, como:
+
+* VADER (Stuart Ashman) — gera ideias de teste para variações, dados inválidos e diferentes estados/fluxos. Essa heurística é aplicada especialmente na definição dos cenários exploratórios.
+
+### Técnicas de design de teste
+
+* Particionamento de Equivalência
+* Análise de Valor Limite
+* Tabela de Decisão
+* Transição de Estados
+
+### Tipos de teste
+
+* Exploratório — valida hipóteses e busca comportamentos inesperados durante a execução.
+
 ---
 
 # 3. Health Check
@@ -656,7 +673,7 @@ Mercado B → sem preço
 **Entrada conceitual**
 
 ```text
-originMarketId = 1
+originMarketId = 1x'
 targetMarketId = 1
 ```
 
@@ -712,6 +729,91 @@ Todo o fluxo deve manter consistência entre os dados cadastrados e o resultado 
 
 ---
 
+## TS-E2E-002 — Produto torna-se indisponível antes da comparação
+
+**Fluxo**
+
+```text
+Cadastrar Produto
+       ↓
+Cadastrar preço no Assaí
+       ↓
+Cadastrar preço no Extra
+       ↓
+Alterar produto para indisponível
+       ↓
+Tentar comparar produto
+```
+
+**Resultado esperado**
+
+A comparação não deve ser realizada e a API deve retornar o erro de regra de negócio.
+
+| Atributo   | Valor                    |
+| ---------- | ------------------------ |
+| Prioridade | P0                       |
+| Técnica    | Transição de Estados     |
+| Nível      | E2E                      |
+| Automação  | Sim                      |
+
+---
+
+## TS-E2E-003 — Atualizar preço e validar comparação com preço atualizado
+
+**Fluxo**
+
+```text
+Cadastrar Produto
+       ↓
+Cadastrar preço no Assaí
+       ↓
+Atualizar preço no Assaí
+       ↓
+Cadastrar preço no Extra
+       ↓
+Comparar produto
+       ↓
+Validar economia com preço atualizado
+```
+
+**Resultado esperado**
+
+A comparação deve usar o preço atualizado e calcular a economia corretamente.
+
+| Atributo   | Valor                    |
+| ---------- | ------------------------ |
+| Prioridade | P0                       |
+| Técnica    | Fluxo funcional          |
+| Nível      | E2E                      |
+| Automação  | Sim                      |
+
+---
+
+## TS-E2E-004 — Comparação falha quando apenas um mercado tem preço
+
+**Fluxo**
+
+```text
+Cadastrar Produto
+       ↓
+Cadastrar preço no Assaí
+       ↓
+Tentar comparar produto
+```
+
+**Resultado esperado**
+
+A comparação não deve ser realizada e a API deve retornar a mensagem de preço ausente.
+
+| Atributo   | Valor                    |
+| ---------- | ------------------------ |
+| Prioridade | P0                       |
+| Técnica    | Fluxo funcional          |
+| Nível      | E2E                      |
+| Automação  | Sim                      |
+
+---
+
 # 10. Cenários Exploratórios
 
 Os cenários abaixo representam pontos de investigação e não necessariamente casos de teste automatizados.
@@ -739,6 +841,8 @@ Explorar:
 * alteração de preço imediatamente antes da comparação;
 * produto desativado após possuir preços cadastrados.
 
+Esses itens também foram pensados com base em VADER, para cobrir variações de estado e dados inesperados.
+
 ### EXP-003 — Consistência
 
 Explorar:
@@ -761,6 +865,7 @@ Explorar:
 | TS-PRC-002 | Preço      | Zero                         | BVA                   | Unit/API        | P0         | Sim       |
 | TS-PRC-003 | Preço      | `0.01`                       | BVA                   | Unit/API        | P0         | Sim       |
 | TS-PRC-004 | Preço      | Negativo                     | BVA                   | Unit/API        | P0         | Sim       |
+| TS-PRC-009 | Preço      | Tipo inválido                | Equivalência          | Unit/API        | P0         | Sim       |
 | TS-PRC-008 | Preço      | Atualização                  | Funcional             | Integration/API | P0         | Sim       |
 | TS-CMP-001 | Comparação | Origem mais barata           | Decision Table        | Unit/API        | P0         | Sim       |
 | TS-CMP-002 | Comparação | Destino mais barato          | Decision Table        | Unit/API        | P0         | Sim       |
@@ -769,6 +874,9 @@ Explorar:
 | TS-CMP-006 | Comparação | Origem sem preço             | Decision Table        | API             | P0         | Sim       |
 | TS-CMP-007 | Comparação | Destino sem preço            | Decision Table        | API             | P0         | Sim       |
 | TS-E2E-001 | Fluxo      | Produto → Preço → Comparação | Fluxo                 | E2E             | P0         | Sim       |
+| TS-E2E-002 | Fluxo      | Produto indisponível antes da comparação | Transição/Fluxo | E2E | P0 | Sim |
+| TS-E2E-003 | Fluxo      | Atualizar preço e comparar resultado | Fluxo funcional | E2E | P0 | Sim |
+| TS-E2E-004 | Fluxo      | Um mercado sem preço | Fluxo funcional | E2E | P0 | Sim |
 
 ---
 
@@ -787,3 +895,9 @@ Novos cenários podem ser adicionados quando:
 A existência de um cenário neste documento não significa obrigatoriamente que ele deverá possuir um teste automatizado.
 
 A decisão de automação deverá considerar risco, repetibilidade, valor do feedback e custo de manutenção.
+
+---
+
+## Fonte
+Estes cenários foram definidos com base na análise de riscos e na estratégia de teste orientada por risco, aplicando técnicas de particionamento de equivalência, BVA e tabela de decisão amplamente utilizadas no mercado e referenciadas em `Lessons Learned in Software Testing`.
+
