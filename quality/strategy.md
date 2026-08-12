@@ -713,3 +713,14 @@ Possíveis evoluções:
 * execução em pipeline CI/CD.
 
 Cada nova evolução deverá ser precedida por uma nova análise de riscos e revisão da estratégia de testes.
+
+---
+
+## Fonte
+Esta estratégia foi fundamentada em práticas de test design orientadas por risco, conforme descrito por Cem Kaner, James Bach e Bret Pettichord em `Lessons Learned in Software Testing`, e em abordagens de mercado aplicadas a APIs REST por times de qualidade em empresas de software.
+
+Normas citadas:
+
+* `ISO/IEC/IEEE 29119-2` — definição do conteúdo do `Test Plan` e dos itens de planejamento de testes.
+* `ISO/IEC/IEEE 29119-3` — processo `Plan Testing`, incluindo seleção de objetivos, níveis, técnicas e critérios de cobertura de testes.
+
