@@ -58,7 +58,7 @@ A primeira versão utiliza armazenamento em memória e não possui:
 
 ---
 
-## 3. Objetivo da Área de Testes
+## 3. Objetivo de Testes
 
 A Área de Testes tem como objetivo fornecer informações sobre a qualidade do produto e reduzir os principais riscos associados ao seu uso.
 
@@ -95,20 +95,6 @@ Serão avaliados:
 * estrutura das respostas;
 * consistência dos dados;
 * contrato da API.
-
-## 4.2 Fora do Escopo
-
-Nesta primeira versão não serão avaliados:
-
-* autenticação;
-* autorização;
-* banco de dados externo;
-* mensageria;
-* cache;
-* infraestrutura cloud;
-* observabilidade distribuída.
-
-Esses aspectos poderão ser avaliados em versões futuras da aplicação.
 
 ---
 
