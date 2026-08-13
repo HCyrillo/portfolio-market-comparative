@@ -1,5 +1,4 @@
 const path = require('path');
-const Product = require('../models/product.model');
 const { now } = require('../utils/date');
 const JsonDataStore = require('./json-data-store');
 
@@ -10,7 +9,7 @@ class ProductRepository {
     const timestamp = now();
     return this.store.update((products) => {
       const nextId = products.length ? Math.max(...products.map((product) => product.id)) + 1 : 1;
-      const product = new Product({ id: nextId, name, category, available, createdAt: timestamp, updatedAt: timestamp });
+      const product = { id: nextId, name, category, available, createdAt: timestamp, updatedAt: timestamp };
       products.push(product);
       return product;
     });

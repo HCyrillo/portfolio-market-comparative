@@ -1,5 +1,4 @@
 const path = require('path');
-const Price = require('../models/price.model');
 const { now } = require('../utils/date');
 const JsonDataStore = require('./json-data-store');
 
@@ -15,7 +14,7 @@ class PriceRepository {
     return this.store.update((prices) => {
       if (prices.some((item) => item.marketId === marketId && item.productId === productId)) return null;
       const nextId = prices.length ? Math.max(...prices.map((item) => item.id)) + 1 : 1;
-      const entry = new Price({ id: nextId, marketId, productId, priceInCents, createdAt: timestamp, updatedAt: timestamp });
+      const entry = { id: nextId, marketId, productId, priceInCents, createdAt: timestamp, updatedAt: timestamp };
       prices.push(entry);
       return entry;
     });

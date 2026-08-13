@@ -1,0 +1,1 @@
+{"total":2,"items":[{"uid":"b1a24f9c35ae9d8068cc9528d9f49052","name":"API error formats and HTTP codes (integration)","statistic":{"failed":1,"broken":0,"skipped":0,"passed":4,"unknown":0,"total":5}},{"uid":"d5febb3bb5293157ca63b06fd577a251","name":"services com persistência JSON","statistic":{"failed":0,"broken":0,"skipped":0,"passed":3,"unknown":0,"total":3}}]}
