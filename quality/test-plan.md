@@ -971,5 +971,3 @@ Este documento utiliza como referência conceitual:
 - ISO/IEC/IEEE 29119-3 — Test Documentation.
 
 Os conceitos foram adaptados ao contexto de uma API pequena, projeto individual e ciclo de curta duração.
-
-O documento não declara conformidade formal com a ISO/IEC/IEEE 29119.
