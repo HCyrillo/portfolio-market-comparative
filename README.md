@@ -1,270 +1,354 @@
 # Market Comparative API
 
-API REST em Node.js para cadastrar produtos e preços de supermercados e comparar o valor de um produto entre dois mercados. O projeto foi desenvolvido para estudos de Engenharia de Software e Qualidade e usa arquivos JSON locais como persistência.
+## Regras de negocio
 
-## Funcionalidades
+### Mercados
 
-- consulta dos mercados cadastrados;
-- cadastro e busca de produtos canônicos;
-- alteração da disponibilidade de produtos;
-- cadastro, atualização e consulta de preços;
-- filtros de preço por mercado e produto;
-- comparação entre dois mercados, com indicação do menor preço e da economia;
-- documentação interativa com Swagger UI;
-- respostas e erros em formato padronizado.
+- Mercados sao dados de referencia da aplicacao: podem ser consultados, mas nao ha endpoint para cria-los, altera-los ou remove-los.
+- Um mercado precisa existir para receber um preco ou participar de uma comparacao.
 
-## Tecnologias e requisitos
+### Produtos
 
-- Node.js 18 ou superior;
-- Express 4;
-- express-validator;
-- Swagger UI e OpenAPI 3;
-- Morgan;
-- ESLint 9.
+- Um produto canonico e criado com nome, categoria e disponibilidade obrigatorios.
+- O nome e a categoria devem conter texto; a disponibilidade deve ser booleana.
+- Produtos nao sao removidos fisicamente. A disponibilidade pode ser alterada, preservando os precos ja cadastrados e seu historico.
+- Um produto indisponivel pode continuar com precos cadastrados, mas nao pode ser usado em uma comparacao.
+- A busca de produtos considera apenas o nome e nao diferencia maiusculas de minusculas, seguindo as regras de localidade `pt-BR`.
 
-## Como executar
+### Precos
 
-Instale as dependências e inicie a aplicação:
+- Um preco sempre pertence a um unico par de mercado e produto; ambos devem existir antes do cadastro.
+- So pode existir um preco por combinacao de mercado e produto. Uma segunda tentativa para o mesmo par retorna conflito (`409`).
+- O valor deve ser um numero positivo, com no maximo duas casas decimais.
+- Valores sao armazenados como centavos inteiros (`priceInCents`) e convertidos para reais apenas nas respostas da API. Isso evita imprecisao de ponto flutuante no calculo da economia.
+- A atualizacao de preco altera somente o valor e a data de atualizacao; mercado e produto vinculados nao mudam.
+- A listagem de precos pode ser filtrada por mercado, produto ou ambos e retorna o nome das entidades relacionadas.
+
+### Comparacao
+
+- A comparacao recebe exatamente um produto e dois mercados: origem e destino.
+- Os dois mercados devem ser diferentes.
+- Produto e mercados devem existir. Para comparacao, erros de inexistencia retornam `400`.
+- O produto precisa estar disponivel para comparacao.
+- Os dois mercados devem ter preco cadastrado para o produto. A ausencia de preco em qualquer um deles retorna `422` e identifica o mercado sem cadastro.
+- Quando os valores sao iguais, o resultado informa que os dois mercados possuem o mesmo preco e nao define um vencedor.
+- Quando os valores diferem, o menor preco e declarado como melhor preco. A economia corresponde a diferenca exata entre o maior e o menor valor.
+
+### Identificadores e historico
+
+- Identificadores de produtos e precos sao numericos, sequenciais e gerados a partir do maior identificador existente no respectivo conjunto de dados.
+- Registros possuem `createdAt` e `updatedAt`. A criacao define ambos; alteracoes de disponibilidade ou preco atualizam somente `updatedAt`.
+
+API REST em Node.js para estudo de Engenharia de Software e Engenharia de Qualidade. Ela compara preços de Produtos Canônicos entre os mercados Assaí, Extra, Sonda e Carrefour, persistindo os dados em arquivos JSON locais.
+
+## Tecnologias
+
+- Node.js e Express
+- express-validator para validação
+- Morgan para logs HTTP
+- Swagger UI / OpenAPI 3
+- ESLint
+
+## Arquitetura
+
+O projeto utiliza MVC com Repository. Controllers coordenam HTTP, Services concentram regras de negócio e Repositories isolam o armazenamento em memória. Essa separação reduz acoplamento e permite trocar arrays por PostgreSQL, adicionar cache, JWT, mensageria, observabilidade, testes e CI/CD sem refatorar as regras centrais.
+
+```text
+src/
+├── config/          composição e configurações
+├── controllers/     HTTP e formatação de respostas
+├── middlewares/     validação, erros e rota inexistente
+├── models/          entidades do domínio
+├── repositories/    acesso aos arrays em memória
+├── resources/       Swagger, Postman, exemplos e base JSON local
+├── routes/          definição dos endpoints
+├── services/        regras de negócio
+├── app.js           composição do Express
+└── server.js         inicialização
+```
+
+Fluxo principal:
+
+```text
+Mercado
+  ↓
+Produto Canônico
+  ↓
+Preço
+  ↓
+Comparação
+```
+
+
+## Instalação e execução
+
+Instale as dependências:
 
 ```bash
 npm install
+```
+
+Execute a aplicação:
+
+```bash
 npm start
 ```
 
-Para desenvolvimento com reinicialização automática:
+Modo de desenvolvimento:
 
 ```bash
 npm run dev
 ```
 
-Por padrão, a API fica disponível em `http://localhost:3000`.
-
-| Recurso | Endereço |
-|---|---|
-| API | `http://localhost:3000/api/v1` |
-| Swagger UI | `http://localhost:3000/portfolio-market-comparative` |
-| Health check | `http://localhost:3000/api/v1/health` |
-
-### Variáveis de ambiente
-
-| Variável | Descrição | Padrão |
-|---|---|---|
-| `PORT` | Porta do servidor HTTP | `3000` |
-| `DATA_DIR` | Diretório dos arquivos JSON utilizados pela aplicação | `src/resources/data` |
-| `NODE_ENV` | Em `production`, habilita o formato de log HTTP `combined` | não definido |
-
-Exemplo no PowerShell:
-
-```powershell
-$env:PORT=8080
-$env:DATA_DIR="C:\dados\market-comparative"
-npm start
-```
-
-## Endpoints
-
-Todas as rotas da API usam o prefixo `/api/v1`.
-
-| Método | Rota | Descrição |
-|---|---|---|
-| `GET` | `/health` | Verifica a disponibilidade da API |
-| `GET` | `/markets` | Lista os mercados cadastrados |
-| `POST` | `/products` | Cadastra um produto canônico |
-| `GET` | `/products?search=coca` | Lista produtos e permite busca parcial por nome |
-| `PATCH` | `/products/:id/availability` | Altera a disponibilidade de um produto |
-| `POST` | `/prices` | Cadastra o preço de um produto em um mercado |
-| `GET` | `/prices?marketId=1&productId=2` | Lista preços com filtros opcionais |
-| `PATCH` | `/prices/:id` | Atualiza somente o valor de um preço |
-| `GET` | `/comparison?originMarketId=1&targetMarketId=2&productId=2` | Compara um produto entre dois mercados |
-
-Os payloads, parâmetros, exemplos e códigos HTTP completos estão disponíveis no Swagger UI.
-
-## Exemplos de uso
-
-### Criar um produto
+Lint:
 
 ```bash
-curl -X POST http://localhost:3000/api/v1/products \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Café Torrado 500g","category":"Mercearia","available":true}'
-```
-
-### Cadastrar um preço
-
-```bash
-curl -X POST http://localhost:3000/api/v1/prices \
-  -H "Content-Type: application/json" \
-  -d '{"marketId":1,"productId":1,"price":18.90}'
-```
-
-### Comparar preços
-
-```bash
-curl "http://localhost:3000/api/v1/comparison?originMarketId=1&targetMarketId=2&productId=2"
-```
-
-Quando existe um vencedor, a resposta contém o mercado com o menor preço e a economia:
-
-```json
-{
-  "data": {
-    "product": { "id": 2, "name": "Arroz Tipo 1 5kg" },
-    "markets": [
-      { "id": 1, "name": "Assaí", "price": 28.9 },
-      { "id": 2, "name": "Extra", "price": 31.9 }
-    ],
-    "bestPrice": {
-      "marketId": 1,
-      "marketName": "Assaí",
-      "price": 28.9,
-      "saving": 3
-    }
-  },
-  "metadata": { "timestamp": "2026-08-09T12:00:00.000Z" }
-}
-```
-
-Em caso de empate, `bestPrice` não é retornado; a resposta contém a mensagem `Os dois mercados possuem o mesmo preço.`.
-
-## Regras de negócio
-
-### Mercados
-
-- Mercados são dados de referência e possuem apenas endpoint de consulta.
-- Um mercado precisa existir para receber um preço ou participar de uma comparação.
-- A base inicial contém Assaí, Extra, Sonda, Carrefour e Pão de Açúcar.
-
-### Produtos
-
-- Nome, categoria e disponibilidade são obrigatórios.
-- Nome e categoria devem ser textos não vazios, e `available` deve ser booleano.
-- Campos adicionais no corpo da criação ou da alteração de disponibilidade são rejeitados.
-- Produtos não são excluídos: sua disponibilidade pode ser alterada, preservando os preços cadastrados.
-- A busca por nome é parcial e não diferencia maiúsculas de minúsculas, conforme a localidade `pt-BR`.
-- Um produto indisponível não pode participar de uma comparação.
-
-### Preços
-
-- Mercado e produto devem existir antes do cadastro do preço.
-- Só pode existir um preço para cada combinação de mercado e produto; duplicidades retornam `409 Conflict`.
-- O preço deve ser um número positivo com no máximo duas casas decimais.
-- O valor é armazenado em centavos inteiros (`priceInCents`) e convertido para reais nas respostas.
-- A atualização modifica somente o valor e o campo `updatedAt`.
-- A listagem pode ser filtrada por `marketId`, `productId` ou ambos e inclui os nomes relacionados.
-
-### Comparação
-
-- A comparação exige `originMarketId`, `targetMarketId` e `productId`.
-- Os mercados de origem e destino devem ser diferentes.
-- Produto e mercados devem existir, e o produto deve estar disponível.
-- Os dois mercados precisam ter preço para o produto; a ausência de preço retorna `422 Unprocessable Entity`.
-- Em caso de diferença, vence o menor preço e `saving` representa a diferença exata entre os valores.
-- Em caso de empate, nenhum vencedor é definido.
-
-### Identificadores e datas
-
-- IDs de produtos e preços são inteiros sequenciais, calculados a partir do maior ID existente.
-- Registros possuem `createdAt` e `updatedAt` no formato ISO 8601.
-- Na criação, as duas datas são iguais; atualizações modificam apenas `updatedAt`.
-
-## Formato das respostas
-
-Respostas de sucesso são envelopadas em `data` e `metadata`:
-
-```json
-{
-  "data": {},
-  "metadata": {
-    "timestamp": "2026-08-09T12:00:00.000Z"
-  }
-}
-```
-
-Erros usam um formato único:
-
-```json
-{
-  "timestamp": "2026-08-09T12:00:00.000Z",
-  "status": 400,
-  "error": "Bad Request",
-  "message": "Descrição do erro."
-}
-```
-
-## Arquitetura
-
-O projeto mantém três fronteiras principais: interface HTTP, regras de negócio e persistência:
-
-```text
-Requisição HTTP
-      ↓
-Routes/Middlewares → Services → Repositories → Arquivos JSON
-```
-
-```text
-src/
-├── config/             composição das dependências
-├── middlewares/        validação, erros e rotas inexistentes
-├── repositories/       acesso e gravação dos arquivos JSON
-├── resources/
-│   ├── data/           base de dados padrão
-│   └── swagger/        especificação OpenAPI
-├── routes/             interface HTTP e validações de entrada
-├── services/           regras de negócio
-├── utils/              erros, datas e conversão monetária
-├── app.js              composição da aplicação Express
-└── server.js           inicialização e encerramento do servidor
-```
-
-O armazenamento é persistente e local. As gravações são serializadas por arquivo e usam arquivo temporário seguido de renomeação, reduzindo o risco de escrita parcial. O diretório pode ser substituído com `DATA_DIR`, o que permite isolar dados em diferentes ambientes.
-
-## Testes e qualidade
-
-```bash
-npm test                # integration + e2e
-npm run test:unit       # unit tests only
-npm run test:integration
-npm run test:e2e
-npm run coverage        # coverage for unit tests (nyc)
 npm run lint
 npm run lint:fix
 ```
 
-O projeto usa Mocha + Chai como runner e assertion library. Os testes E2E usam Supertest para exercitar a aplicação Express pelo contrato HTTP. Cada teste integrado e E2E usa um diretório temporário isolado para a persistência JSON.
+API: `http://localhost:3000`  
+Swagger: `http://localhost:3000/api-docs`
+
+---
+
+## Testes automatizados
+
+A suíte de testes é organizada por nível para manter responsabilidades claras e evitar duplicação desnecessária de cobertura.
 
 ```text
 test/
-├── unit/          regras monetárias e comparação isolada
-├── integration/   services, repositories e persistência JSON real
-├── e2e/           fluxos completos pela API HTTP
-└── helpers/       criação e limpeza dos dados temporários
+├── unit/
+│   ├── comparison.service.test.js
+│   └── money.test.js
+│
+├── integration/
+│   ├── json-data-store.integration.test.js
+│   ├── product.service.integration.test.js
+│   └── price.service.integration.test.js
+│
+├── api/
+│   ├── products.api.test.js
+│   ├── prices.api.test.js
+│   ├── comparison.api.test.js
+│   ├── errors.api.test.js
+│   └── health-and-markets.api.test.js
+│
+├── e2e/
+│   └── comparison-flow.e2e.test.js
+│
+└── helpers/
+    ├── data-directory.js
+    ├── fixtures.js
+    └── mocha.setup.js
 ```
 
-A estratégia e os cenários que orientam a suíte estão documentados em [`quality/strategy.md`](quality/strategy.md) e [`quality/test-scenarios.md`](quality/test-scenarios.md).
+### Estratégia por nível
 
-## Git hooks (Husky)
+- **Unit**: valida regras isoladas e funções puras, sem acessar filesystem ou HTTP.
+- **Integration**: valida a interação entre services, repositories e persistência em arquivos JSON.
+- **API**: valida comportamento HTTP, status codes, payloads, validações e contratos observáveis pelo consumidor.
+- **E2E**: valida apenas os fluxos críticos de negócio de ponta a ponta.
 
-O repositório inclui um hook de pre-commit para executar `npm run lint` automaticamente antes de criar commits. Para ativar localmente (apenas uma vez por máquina):
+Os testes utilizam **Mocha**, **Chai**, **chai-as-promised** e **Supertest**.
+
+O setup global dos testes deve configurar:
+
+```text
+NODE_ENV=test
+```
+
+e inicializar as extensões necessárias do Chai.
+
+### Scripts recomendados
+
+Para permitir execução por nível, configure os seguintes scripts no `package.json`:
+
+```json
+{
+  "scripts": {
+    "test": "npm run test:unit && npm run test:integration && npm run test:api && npm run test:e2e",
+    "test:unit": "mocha \"test/unit/**/*.test.js\"",
+    "test:integration": "mocha \"test/integration/**/*.test.js\"",
+    "test:api": "mocha \"test/api/**/*.test.js\"",
+    "test:e2e": "mocha \"test/e2e/**/*.test.js\""
+  }
+}
+```
+
+Caso o projeto utilize um setup global do Mocha, incluir o arquivo na configuração ou nos comandos de execução.
+
+Exemplo:
 
 ```bash
-npm install           # garante que devDependencies (husky, eslint) estejam instalados
-npx husky install     # instala os hooks Git na sua máquina
+mocha --require test/helpers/mocha.setup.js "test/unit/**/*.test.js"
 ```
 
-Para adicionar o hook ao histórico do repositório (caso ainda não esteja commitado):
+Os scripts também podem incluir esse `--require` diretamente no `package.json`.
+
+### Executar todos os testes
 
 ```bash
-git add .husky/pre-commit
-git commit -m "chore(hooks): add pre-commit lint hook"
+npm test
 ```
 
-Se o hook bloquear um commit por falhas no lint, corrija os avisos ou force o commit com `--no-verify` (não recomendado).
+A execução completa segue:
 
-Nota: em ambientes Windows sem `sh` o hook requer Git for Windows (Bash) ou a criação de um equivalente PowerShell; se desejar, eu adapto o hook para detectar PowerShell automaticamente.
+```text
+Unit
+ ↓
+Integration
+ ↓
+API
+ ↓
+E2E
+```
 
-## Limitações atuais
+### Executar apenas testes unitários
 
-- não possui autenticação ou autorização;
-- não utiliza banco de dados externo ou ORM;
-- não possui paginação;
-- os arquivos JSON são adequados ao estudo e à execução local, não a múltiplas instâncias distribuídas.
+```bash
+npm run test:unit
+```
+
+Principais alvos:
+
+- regras de comparação;
+- cálculo de valores monetários;
+- validações de domínio isoladas.
+
+### Executar apenas testes de integração
+
+```bash
+npm run test:integration
+```
+
+Principais alvos:
+
+- services + repositories;
+- persistência em arquivos JSON;
+- atualização e recuperação de dados;
+- consistência e duplicidade.
+
+### Executar apenas testes de API
+
+```bash
+npm run test:api
+```
+
+Principais alvos:
+
+- status HTTP;
+- estrutura de request/response;
+- validações;
+- tratamento de erros;
+- contrato exposto pela API.
+
+### Executar apenas testes E2E
+
+```bash
+npm run test:e2e
+```
+
+Os testes E2E são intencionalmente reduzidos e cobrem principalmente o fluxo:
+
+```text
+Cadastrar Produto
+       ↓
+Cadastrar Preço no Mercado A
+       ↓
+Cadastrar Preço no Mercado B
+       ↓
+Comparar Produto
+       ↓
+Validar Resultado
+```
+
+Também pode ser validado o fluxo de atualização de preço seguido de nova comparação.
+
+### Isolamento dos dados de teste
+
+Os testes automatizados devem utilizar diretórios e arquivos de dados próprios, evitando modificar os arquivos utilizados pela execução normal da aplicação.
+
+O diretório de persistência pode ser alterado pela variável:
+
+```text
+DATA_DIR
+```
+
+Durante os testes, os helpers criam bases temporárias e independentes, permitindo que:
+
+- um teste não dependa do resultado de outro;
+- a ordem de execução não altere o resultado;
+- dados de desenvolvimento não sejam modificados;
+- os testes possam ser repetidos de forma determinística.
+
+### Executar um arquivo específico
+
+Exemplo:
+
+```bash
+npx mocha --require test/helpers/mocha.setup.js test/api/comparison.api.test.js
+```
+
+### Executar um teste pelo nome
+
+Exemplo:
+
+```bash
+npx mocha \
+  --require test/helpers/mocha.setup.js \
+  test/unit/comparison.service.test.js \
+  --grep "identifica o menor preço"
+```
+
+### Rastreabilidade
+
+Quando aplicável, os testes automatizados podem utilizar os identificadores definidos nos artefatos de qualidade.
+
+Exemplo:
+
+```text
+RSK-001
+   ↓
+TS-CMP-001
+   ↓
+comparison.service.test.js
+   ↓
+Execução automatizada
+```
+
+Isso permite relacionar:
+
+```text
+Risco
+ ↓
+Cenário
+ ↓
+Teste
+ ↓
+Resultado
+```
+
+Os documentos de estratégia, riscos e cenários ficam disponíveis no diretório `quality/`.
+
+---
+
+## Endpoints
+
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/api/v1/health` | Health check |
+| GET | `/api/v1/markets` | Lista mercados padrão |
+| POST | `/api/v1/products` | Cria produto canônico |
+| GET | `/api/v1/products?search=coca` | Lista e busca produtos |
+| PATCH | `/api/v1/products/:id/availability` | Altera disponibilidade |
+| POST | `/api/v1/prices` | Cria preço |
+| PATCH | `/api/v1/prices/:id` | Atualiza o valor de um preço |
+| GET | `/api/v1/prices` | Lista preços, filtrável por mercado/produto |
+| GET | `/api/v1/comparison` | Compara dois mercados |
+
+As respostas de sucesso são envelopadas em `data` e `metadata.timestamp`; erros seguem um formato único com timestamp, status, error e message. Toda a documentação de payloads, parâmetros, exemplos e códigos HTTP está disponível no Swagger.
+
+## Decisões
+
+Os dados são persistidos localmente em `data/markets.json`, `data/products.json` e `data/prices.json`, sem banco de dados ou ORM. O diretório pode ser alterado com a variável `DATA_DIR`, permitindo uma base isolada nos testes. Escritas usam arquivo temporário e rename atômico. Os valores monetários são armazenados internamente em centavos inteiros e convertidos para BRL apenas nas respostas. Produtos não são removidos fisicamente: sua disponibilidade é alterada e o histórico de preços permanece íntegro.
