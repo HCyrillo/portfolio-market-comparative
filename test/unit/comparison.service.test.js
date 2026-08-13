@@ -1,6 +1,11 @@
 const { expect } = require('chai');
 const ComparisonService = require('../../src/services/comparison.service');
 
+const rejectionFrom = (promise) => promise.then(
+  () => { throw new Error('Era esperada uma rejeição.'); },
+  (error) => error
+);
+
 const buildService = ({
   product = { id: 7, name: 'Arroz', available: true },
   prices = [890, 950]
@@ -42,22 +47,28 @@ describe('ComparisonService', () => {
   });
 
   it('[TS-CMP-009] rejeita comparação entre o mesmo mercado', async () => {
-    await expect(
+    const error = await rejectionFrom(
       buildService().compare({ originMarketId: 1, targetMarketId: 1, productId: 7 })
-    ).to.be.rejected.and.have.property('status', 400);
+    );
+
+    expect(error).to.have.property('status', 400);
   });
 
   it('[TS-CMP-005][RSK-005] rejeita produto indisponível', async () => {
-    await expect(
+    const error = await rejectionFrom(
       buildService({ product: { id: 7, available: false } })
         .compare({ originMarketId: 1, targetMarketId: 2, productId: 7 })
-    ).to.be.rejected.and.have.property('status', 400);
+    );
+
+    expect(error).to.have.property('status', 400);
   });
 
   it('[TS-CMP-007][RSK-002] rejeita comparação quando um mercado não possui preço', async () => {
-    await expect(
+    const error = await rejectionFrom(
       buildService({ prices: [890] })
         .compare({ originMarketId: 1, targetMarketId: 2, productId: 7 })
-    ).to.be.rejected.and.have.property('status', 422);
+    );
+
+    expect(error).to.have.property('status', 422);
   });
 });
