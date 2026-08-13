@@ -1,4 +1,4 @@
 const router = require('express').Router();
-const controller = require('../controllers/health.controller');
-router.get('/', controller.health);
+const { success } = require('../utils/response');
+router.get('/', (_req, res) => success(res, { status: 'UP' }));
 module.exports = router;

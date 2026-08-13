@@ -1,4 +1,4 @@
-const { now } = require('../utils/date');
+const { now } = require('./date');
 
 const success = (res, data, status = 200) => res.status(status).json({ data, metadata: { timestamp: now() } });
 

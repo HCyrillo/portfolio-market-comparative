@@ -193,31 +193,23 @@ Erros usam um formato único:
 
 ## Arquitetura
 
-O projeto separa a interface HTTP, as regras de negócio e a persistência:
+O projeto mantém três fronteiras principais: interface HTTP, regras de negócio e persistência:
 
 ```text
 Requisição HTTP
       ↓
-Routes → Middlewares → Controllers
-                         ↓
-                      Services
-                         ↓
-                    Repositories
-                         ↓
-                    Arquivos JSON
+Routes/Middlewares → Services → Repositories → Arquivos JSON
 ```
 
 ```text
 src/
-├── config/             composição das dependências e constantes
-├── controllers/        adaptação entre HTTP e serviços
+├── config/             composição das dependências
 ├── middlewares/        validação, erros e rotas inexistentes
-├── models/             entidades do domínio
 ├── repositories/       acesso e gravação dos arquivos JSON
 ├── resources/
 │   ├── data/           base de dados padrão
 │   └── swagger/        especificação OpenAPI
-├── routes/             rotas e validações de entrada
+├── routes/             interface HTTP e validações de entrada
 ├── services/           regras de negócio
 ├── utils/              erros, datas e conversão monetária
 ├── app.js              composição da aplicação Express
@@ -226,19 +218,53 @@ src/
 
 O armazenamento é persistente e local. As gravações são serializadas por arquivo e usam arquivo temporário seguido de renomeação, reduzindo o risco de escrita parcial. O diretório pode ser substituído com `DATA_DIR`, o que permite isolar dados em diferentes ambientes.
 
-## Qualidade e comandos disponíveis
+## Testes e qualidade
 
 ```bash
+npm test                # integration + e2e
+npm run test:unit       # unit tests only
+npm run test:integration
+npm run test:e2e
+npm run coverage        # coverage for unit tests (nyc)
 npm run lint
 npm run lint:fix
 ```
 
-A estratégia de testes está documentada em [`quality/strategy.md`](quality/strategy.md). Atualmente o projeto não possui suíte automatizada nem script `npm test`; essa documentação descreve a abordagem planejada para testes unitários, de integração, API, contrato e exploração.
+O projeto usa Mocha + Chai como runner e assertion library. Os testes E2E usam Supertest para exercitar a aplicação Express pelo contrato HTTP. Cada teste integrado e E2E usa um diretório temporário isolado para a persistência JSON.
+
+```text
+test/
+├── unit/          regras monetárias e comparação isolada
+├── integration/   services, repositories e persistência JSON real
+├── e2e/           fluxos completos pela API HTTP
+└── helpers/       criação e limpeza dos dados temporários
+```
+
+A estratégia e os cenários que orientam a suíte estão documentados em [`quality/strategy.md`](quality/strategy.md) e [`quality/test-scenarios.md`](quality/test-scenarios.md).
+
+## Git hooks (Husky)
+
+O repositório inclui um hook de pre-commit para executar `npm run lint` automaticamente antes de criar commits. Para ativar localmente (apenas uma vez por máquina):
+
+```bash
+npm install           # garante que devDependencies (husky, eslint) estejam instalados
+npx husky install     # instala os hooks Git na sua máquina
+```
+
+Para adicionar o hook ao histórico do repositório (caso ainda não esteja commitado):
+
+```bash
+git add .husky/pre-commit
+git commit -m "chore(hooks): add pre-commit lint hook"
+```
+
+Se o hook bloquear um commit por falhas no lint, corrija os avisos ou force o commit com `--no-verify` (não recomendado).
+
+Nota: em ambientes Windows sem `sh` o hook requer Git for Windows (Bash) ou a criação de um equivalente PowerShell; se desejar, eu adapto o hook para detectar PowerShell automaticamente.
 
 ## Limitações atuais
 
 - não possui autenticação ou autorização;
 - não utiliza banco de dados externo ou ORM;
 - não possui paginação;
-- não possui suíte de testes automatizados configurada;
 - os arquivos JSON são adequados ao estudo e à execução local, não a múltiplas instâncias distribuídas.

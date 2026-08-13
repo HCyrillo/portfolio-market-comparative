@@ -4,12 +4,24 @@
   "description": "REST API for supermarket price comparison",
   "main": "src/server.js",
   "scripts": {
+    "prepare": "husky install",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "test": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/integration test/e2e --reporter spec",
+    "test:unit": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/unit --reporter spec",
+    "test:integration": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/integration --reporter spec",
+    "test:e2e": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/e2e --reporter spec",
+    "test:integration:allure": "cross-env ALLURE_RESULTS_DIR=allure-results mocha --reporter mocha-allure-reporter --require test/helpers/mocha.setup.js --recursive --exit test/integration",
+    "test:e2e:allure": "cross-env ALLURE_RESULTS_DIR=allure-results mocha --reporter mocha-allure-reporter --require test/helpers/mocha.setup.js --recursive --exit test/e2e",
+    "coverage": "nyc --reporter=lcov --reporter=text npm run test:unit",
+    "allure:generate": "npx allure generate allure-results --clean -o allure-report",
+    "allure:open": "npx allure open allure-report",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
-  "engines": { "node": ">=18" },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "express": "^4.21.2",
     "express-validator": "^7.2.0",
@@ -19,6 +31,15 @@
   },
   "devDependencies": {
     "eslint": "^9.17.0",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "supertest": "^7.2.2",
+    "mocha": "^10.2.0",
+    "chai": "^4.3.8",
+    "chai-as-promised": "^7.1.1",
+    "nyc": "^15.1.0",
+    "husky": "^8.0.0",
+    "cross-env": "^7.0.3",
+    "mocha-allure-reporter": "^1.3.0",
+    "allure-commandline": "^2.22.0"
   }
 }
