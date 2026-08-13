@@ -10,6 +10,7 @@
     "test": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/integration test/e2e --reporter spec",
     "test:unit": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/unit --reporter spec",
     "test:integration": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/integration --reporter spec",
+    "test:api": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/api --reporter spec",
     "test:e2e": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/e2e --reporter spec",
     "test:integration:allure": "cross-env ALLURE_RESULTS_DIR=allure-results mocha --reporter mocha-allure-reporter --require test/helpers/mocha.setup.js --recursive --exit test/integration",
     "test:e2e:allure": "cross-env ALLURE_RESULTS_DIR=allure-results mocha --reporter mocha-allure-reporter --require test/helpers/mocha.setup.js --recursive --exit test/e2e",
