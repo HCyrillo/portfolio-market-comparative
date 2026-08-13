@@ -36,6 +36,24 @@ describe('Prices API', () => {
       .expect(400);
   });
 
+  it('[TS-PRC-006][RSK-006] rejeita preço para produto inexistente', async () => {
+    const response = await api.post('/api/v1/prices')
+      .send({ marketId: 1, productId: 999, price: 8.9 })
+      .expect(404);
+
+    expect(response.body.message).to.equal('Produto não encontrado.');
+  });
+
+  it('[TS-PRC-007][RSK-006] rejeita preço para mercado inexistente', async () => {
+    const product = await createProduct();
+
+    const response = await api.post('/api/v1/prices')
+      .send({ marketId: 999, productId: product.id, price: 8.9 })
+      .expect(404);
+
+    expect(response.body.message).to.equal('Mercado não encontrado.');
+  });
+
   it('[RSK-004] rejeita preço duplicado para o mesmo mercado e produto', async () => {
     const product = await createProduct();
 

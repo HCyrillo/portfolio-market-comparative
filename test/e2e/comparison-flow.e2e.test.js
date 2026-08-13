@@ -57,4 +57,30 @@ describe('Comparison critical flow E2E', () => {
     expect(response.body.data.bestPrice.marketId).to.equal(2);
     expect(response.body.data.bestPrice.saving).to.equal(0.5);
   });
+
+  it('[TS-E2E-002][RSK-005] impede comparação após desativar o produto', async () => {
+    const product = await createProduct();
+    await createPrice(1, product.id, 8.9).expect(201);
+    await createPrice(2, product.id, 9.5).expect(201);
+    await api.patch(`/api/v1/products/${product.id}/availability`)
+      .send({ available: false })
+      .expect(200);
+
+    const response = await api.get('/api/v1/comparison')
+      .query({ originMarketId: 1, targetMarketId: 2, productId: product.id })
+      .expect(400);
+
+    expect(response.body.message).to.match(/indisponível/);
+  });
+
+  it('[TS-E2E-004][RSK-002] impede comparação quando somente um mercado possui preço', async () => {
+    const product = await createProduct();
+    await createPrice(1, product.id, 8.9).expect(201);
+
+    const response = await api.get('/api/v1/comparison')
+      .query({ originMarketId: 1, targetMarketId: 2, productId: product.id })
+      .expect(422);
+
+    expect(response.body.message).to.match(/Mercado B não possui preço/);
+  });
 });

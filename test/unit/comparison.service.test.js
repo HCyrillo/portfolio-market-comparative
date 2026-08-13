@@ -38,6 +38,18 @@ describe('ComparisonService', () => {
     });
   });
 
+  it('[TS-CMP-002][RSK-001] identifica o segundo mercado como o mais barato', async () => {
+    const result = await buildService({ prices: [950, 890] })
+      .compare({ originMarketId: 1, targetMarketId: 2, productId: 7 });
+
+    expect(result.bestPrice).to.deep.equal({
+      marketId: 2,
+      marketName: 'Mercado B',
+      price: 8.9,
+      saving: 0.6
+    });
+  });
+
   it('[TS-CMP-003][RSK-001] trata empate sem definir vencedor', async () => {
     const result = await buildService({ prices: [900, 900] })
       .compare({ originMarketId: 1, targetMarketId: 2, productId: 7 });
