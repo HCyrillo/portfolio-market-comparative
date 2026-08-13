@@ -242,6 +242,26 @@ test/
 
 A estratégia e os cenários que orientam a suíte estão documentados em [`quality/strategy.md`](quality/strategy.md) e [`quality/test-scenarios.md`](quality/test-scenarios.md).
 
+## Git hooks (Husky)
+
+O repositório inclui um hook de pre-commit para executar `npm run lint` automaticamente antes de criar commits. Para ativar localmente (apenas uma vez por máquina):
+
+```bash
+npm install           # garante que devDependencies (husky, eslint) estejam instalados
+npx husky install     # instala os hooks Git na sua máquina
+```
+
+Para adicionar o hook ao histórico do repositório (caso ainda não esteja commitado):
+
+```bash
+git add .husky/pre-commit
+git commit -m "chore(hooks): add pre-commit lint hook"
+```
+
+Se o hook bloquear um commit por falhas no lint, corrija os avisos ou force o commit com `--no-verify` (não recomendado).
+
+Nota: em ambientes Windows sem `sh` o hook requer Git for Windows (Bash) ou a criação de um equivalente PowerShell; se desejar, eu adapto o hook para detectar PowerShell automaticamente.
+
 ## Limitações atuais
 
 - não possui autenticação ou autorização;

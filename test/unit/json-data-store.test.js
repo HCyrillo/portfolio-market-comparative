@@ -14,7 +14,7 @@ describe('JsonDataStore (unit)', () => {
   afterEach(async () => {
     try {
       await fs.rm(tmpDir, { recursive: true, force: true });
-    } catch (e) {
+    } catch {
       // ignore
     }
   });

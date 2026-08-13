@@ -1,7 +1,7 @@
 const request = require('supertest');
 const { createApp } = require('../../src/app');
 const { seedToDir, removeDataDirectory } = require('../helpers/fixtures');
-const path = require('path');
+// path not required in these tests
 
 describe('API error formats and HTTP codes (integration)', () => {
   let app;
