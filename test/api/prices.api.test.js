@@ -2,6 +2,7 @@ const request = require('supertest');
 const { expect } = require('chai');
 const { createApp } = require('../../src/app');
 const { seedToDir, removeDataDirectory } = require('../helpers/fixtures');
+const { logEvidence } = require('../helpers/evidence');
 
 describe('Prices API', () => {
   let directory;
@@ -28,12 +29,58 @@ describe('Prices API', () => {
       .expect(201);
 
     expect(response.body.data.price).to.equal(8.9);
+
+    logEvidence('[TS-PRC-001][RSK-003] cadastra preço válido', {
+      method: 'POST',
+      url: '/api/v1/prices',
+      body: { marketId: 1, productId: product.id, price: 8.9 },
+      response: { status: response.status, statusText: response.statusText, body: response.body }
+    });
   });
 
   it('[TS-PRC-009][RSK-003] rejeita preço enviado como string', async () => {
-    await api.post('/api/v1/prices')
+    const response = await api.post('/api/v1/prices')
       .send({ marketId: 1, productId: 1, price: '8.90' })
       .expect(400);
+
+    logEvidence('[TS-PRC-009][RSK-003] rejeita preço enviado como string', {
+      method: 'POST',
+      url: '/api/v1/prices',
+      body: { marketId: 1, productId: 1, price: '8.90' },
+      response: { status: response.status, statusText: response.statusText, body: response.body }
+    });
+  });
+
+  it('[TS-PRC-006][RSK-006] rejeita preço para produto inexistente', async () => {
+    const response = await api.post('/api/v1/prices')
+      .send({ marketId: 1, productId: 999, price: 8.9 })
+      .expect(404);
+
+    expect(response.body.message).to.equal('Produto não encontrado.');
+
+    logEvidence('[TS-PRC-006][RSK-006] rejeita preço para produto inexistente', {
+      method: 'POST',
+      url: '/api/v1/prices',
+      body: { marketId: 1, productId: 999, price: 8.9 },
+      response: { status: response.status, statusText: response.statusText, body: response.body }
+    });
+  });
+
+  it('[TS-PRC-007][RSK-006] rejeita preço para mercado inexistente', async () => {
+    const product = await createProduct();
+
+    const response = await api.post('/api/v1/prices')
+      .send({ marketId: 999, productId: product.id, price: 8.9 })
+      .expect(404);
+
+    expect(response.body.message).to.equal('Mercado não encontrado.');
+
+    logEvidence('[TS-PRC-007][RSK-006] rejeita preço para mercado inexistente', {
+      method: 'POST',
+      url: '/api/v1/prices',
+      body: { marketId: 999, productId: product.id, price: 8.9 },
+      response: { status: response.status, statusText: response.statusText, body: response.body }
+    });
   });
 
   it('[RSK-004] rejeita preço duplicado para o mesmo mercado e produto', async () => {
@@ -43,14 +90,28 @@ describe('Prices API', () => {
       .send({ marketId: 1, productId: product.id, price: 8.9 })
       .expect(201);
 
-    await api.post('/api/v1/prices')
+    const response = await api.post('/api/v1/prices')
       .send({ marketId: 1, productId: product.id, price: 9.5 })
       .expect(409);
+
+    logEvidence('[RSK-004] rejeita preço duplicado para o mesmo mercado e produto', {
+      method: 'POST',
+      url: '/api/v1/prices',
+      body: { marketId: 1, productId: product.id, price: 9.5 },
+      response: { status: response.status, statusText: response.statusText, body: response.body }
+    });
   });
 
   it('rejeita filtro marketId inválido', async () => {
-    await api.get('/api/v1/prices')
+    const response = await api.get('/api/v1/prices')
       .query({ marketId: 'inválido' })
       .expect(400);
+
+    logEvidence('rejeita filtro marketId inválido', {
+      method: 'GET',
+      url: '/api/v1/prices',
+      query: { marketId: 'inválido' },
+      response: { status: response.status, statusText: response.statusText, body: response.body }
+    });
   });
 });

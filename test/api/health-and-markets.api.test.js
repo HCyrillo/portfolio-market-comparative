@@ -2,6 +2,7 @@ const request = require('supertest');
 const { expect } = require('chai');
 const { createApp } = require('../../src/app');
 const { seedToDir, removeDataDirectory } = require('../helpers/fixtures');
+const { logEvidence } = require('../helpers/evidence');
 
 describe('Health and Markets API', () => {
   let directory;
@@ -17,7 +18,13 @@ describe('Health and Markets API', () => {
   });
 
   it('[TS-HEALTH-001] informa aplicação disponível', async () => {
-    await api.get('/api/v1/health').expect(200, /UP/);
+    const response = await api.get('/api/v1/health').expect(200, /UP/);
+
+    logEvidence('[TS-HEALTH-001] informa aplicação disponível', {
+      method: 'GET',
+      url: '/api/v1/health',
+      response: response.body ? { status: response.status, statusText: response.statusText, body: response.body } : response
+    });
   });
 
   it('[TS-MKT-001] lista mercados cadastrados', async () => {
@@ -25,5 +32,11 @@ describe('Health and Markets API', () => {
 
     expect(response.body.data).to.have.lengthOf(2);
     expect(response.body.data.map(({ name }) => name)).to.deep.equal(['Mercado A', 'Mercado B']);
+
+    logEvidence('[TS-MKT-001] lista mercados cadastrados', {
+      method: 'GET',
+      url: '/api/v1/markets',
+      response: { status: response.status, statusText: response.statusText, body: response.body }
+    });
   });
 });

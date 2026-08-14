@@ -108,7 +108,7 @@ npm run lint:fix
 ```
 
 API: `http://localhost:3000`  
-Swagger: `http://localhost:3000/api-docs`
+Swagger: `http://localhost:3000/portfolio-market-comparative`
 
 ---
 
@@ -248,6 +248,27 @@ Principais alvos:
 ```bash
 npm run test:e2e
 ```
+
+### Relatório Allure local
+
+Para gerar e abrir o relatório HTML dos testes com Allure localmente:
+
+```bash
+npm run test:api:allure
+npm run allure:generate
+npm run allure:open
+```
+
+Também é possível gerar o relatório para integração e E2E:
+
+```bash
+npm run test:integration:allure
+npm run test:e2e:allure
+npm run allure:generate
+npm run allure:open
+```
+
+O comando `allure:generate` cria a pasta `allure-report` com o HTML do relatório, e `allure:open` abre a interface no navegador padrão.
 
 Os testes E2E são intencionalmente reduzidos e cobrem principalmente o fluxo:
 

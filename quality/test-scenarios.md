@@ -1076,7 +1076,97 @@ Explorar:
 
 ------------------------------------------------------------------------
 
-# 12. Observações
+# 12. Estratégia de níveis e rastreabilidade da automação
+
+Para cada cenário automatizável, o planejamento passa a registrar:
+
+-   **Nível principal:** nível no qual a regra ou comportamento é
+    validado em profundidade;
+-   **Cobertura complementar:** outro nível que valida uma preocupação
+    diferente, como integração entre componentes, persistência, contrato
+    HTTP ou fluxo completo;
+-   **Automação implementada:** arquivo executável que comprova a
+    cobertura e permite rastrear o cenário.
+
+**Regra prática:** repetir um comportamento em mais de um nível somente
+quando o segundo teste puder detectar uma classe de defeito que o primeiro
+não detectaria. A cobertura complementar não precisa repetir todas as
+variações exercitadas no nível principal.
+
+  ---------------------------------------------------------------------------------------------------------------
+  ID             Nível principal   Cobertura complementar              Automação implementada
+  -------------- ----------------- ------------------------------------ -----------------------------------------
+  TS-HEALTH-001  API               ---                                  `test/api/health-and-markets.api.test.js`
+
+  TS-MKT-001     API               ---                                  `test/api/health-and-markets.api.test.js`
+
+  TS-PRD-001     API               ---                                  `test/api/products.api.test.js`
+
+  TS-PRD-002     API               ---                                  `test/api/products.api.test.js`
+
+  TS-PRD-003     API               ---                                  `test/api/products.api.test.js`
+
+  TS-PRD-004     API               ---                                  `test/api/products.api.test.js`
+
+  TS-AVL-001     Integration       API/E2E: contrato e efeito no fluxo  `test/integration/product.service.integration.test.js`; `test/e2e/comparison-flow.e2e.test.js`
+
+  TS-AVL-002     API               ---                                  `test/api/products.api.test.js`
+
+  TS-AVL-003     API               ---                                  `test/api/products.api.test.js`
+
+  TS-PRC-001     API               Unit: validade e conversão monetária `test/api/prices.api.test.js`; `test/unit/money.test.js`
+
+  TS-PRC-002     Unit              ---                                  `test/unit/money.test.js`
+
+  TS-PRC-003     Unit              API: aceitação de preço válido     `test/unit/money.test.js`; `test/api/prices.api.test.js`
+
+  TS-PRC-004     Unit              ---                                  `test/unit/money.test.js`
+
+  TS-PRC-005     Unit              ---                                  `test/unit/money.test.js`
+
+  TS-PRC-006     API               ---                                  `test/api/prices.api.test.js`
+
+  TS-PRC-007     API               ---                                  `test/api/prices.api.test.js`
+
+  TS-PRC-008     Integration       E2E: reflexo na comparação          `test/integration/price.service.integration.test.js`; `test/e2e/comparison-flow.e2e.test.js`
+
+  TS-PRC-009     Unit              API: contrato de rejeição           `test/unit/money.test.js`; `test/api/prices.api.test.js`
+
+  TS-CMP-001     Unit              E2E: fluxo crítico e contrato HTTP    `test/unit/comparison.service.test.js`; `test/e2e/comparison-flow.e2e.test.js`
+
+  TS-CMP-002     Unit              ---                                  `test/unit/comparison.service.test.js`
+
+  TS-CMP-003     Unit              ---                                  `test/unit/comparison.service.test.js`
+
+  TS-CMP-004     API               ---                                  `test/api/comparison.api.test.js`
+
+  TS-CMP-005     Unit              E2E: transição antes da comparação `test/unit/comparison.service.test.js`; `test/e2e/comparison-flow.e2e.test.js`
+
+  TS-CMP-006     API               ---                                  `test/api/comparison.api.test.js`
+
+  TS-CMP-007     API               Unit: regra isolada                  `test/api/comparison.api.test.js`; `test/unit/comparison.service.test.js`
+
+  TS-CMP-008     API               ---                                  `test/api/comparison.api.test.js`
+
+  TS-CMP-009     API               Unit: regra isolada                  `test/api/comparison.api.test.js`; `test/unit/comparison.service.test.js`
+
+  TS-E2E-001     E2E               Unit: cálculo isolado                `test/e2e/comparison-flow.e2e.test.js`; `test/unit/comparison.service.test.js`
+
+  TS-E2E-002     E2E               Unit: regra de indisponibilidade     `test/e2e/comparison-flow.e2e.test.js`; `test/unit/comparison.service.test.js`
+
+  TS-E2E-003     E2E               Integration: persistência do preço  `test/e2e/comparison-flow.e2e.test.js`; `test/integration/price.service.integration.test.js`
+
+  TS-E2E-004     E2E               API: contrato de preço ausente       `test/e2e/comparison-flow.e2e.test.js`; `test/api/comparison.api.test.js`
+  ---------------------------------------------------------------------------------------------------------------
+
+Os cenários `EXP-001`, `EXP-002` e `EXP-003` continuam sendo roteiros
+exploratórios. Itens repetíveis descobertos nesses roteiros podem ser
+promovidos a testes automatizados; quando isso ocorrer, o teste deve manter
+a tag `EXP-*` até que exista um cenário funcional específico para ele.
+
+------------------------------------------------------------------------
+
+# 13. Observações
 
 Este documento deverá evoluir durante o projeto.
 
