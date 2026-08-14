@@ -406,6 +406,74 @@ npx.cmd allure open allure-report
 
 ---
 
+### Testes de performance com k6
+
+A API possui um conjunto de testes de performance focado em endpoints críticos, com estrutura separada em:
+
+```text
+performance/
+├── k6/
+│   ├── smoke/
+│   │   └── health-smoke.js
+│   └── critical/
+│       └── comparison-critical.js
+``` 
+
+Esse conjunto tem como objetivo validar a API em carga realista e medir o comportamento do endpoint de comparação entre mercados por produto.
+
+#### Requisitos
+
+- a aplicação deve estar em execução localmente em `http://localhost:3000`;
+- o binário do `k6` deve estar instalado no ambiente Windows;
+- o cenário principal usa `30 VUs` durante `1 minuto` e verifica `p(95) < 200 ms`.
+
+#### Instalar o k6 no Windows
+
+A forma mais direta em Windows é usar o gerenciador de pacotes `winget`:
+
+```powershell
+winget install --id=k6.k6 -e
+```
+
+Se o `winget` não estiver disponível, também é possível usar `Chocolatey`:
+
+```powershell
+choco install k6 -y
+```
+
+Verifique a instalação:
+
+```powershell
+k6 version
+```
+
+> O k6 é um binário standalone; não exige stack adicional do Node para execução. O que precisa existir é a API em execução e o k6 instalado no sistema.
+
+#### Executar os cenários de performance
+
+Smoke test do health endpoint:
+
+```powershell
+npm run perf:k6:smoke
+```
+
+Carga do fluxo crítico de comparação:
+
+```powershell
+npm run perf:k6:comparison
+```
+
+Também é possível executar diretamente via k6 sem usar o script do `package.json`:
+
+```powershell
+$env:API_BASE_URL = 'http://localhost:3000'
+k6 run .\performance\k6\critical\comparison-critical.js
+```
+
+O cenário crítico valida que o endpoint `/api/v1/comparison` responda com tempo compatível com a necessidade de negócio e sem falhas relevantes.
+
+---
+
 ### Evidências no Allure
 
 Os testes de **API** e **E2E** podem anexar evidências diretamente ao relatório.

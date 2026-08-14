@@ -3,7 +3,8 @@ module.exports = [
     ignores: ['node_modules/**',
       'coverage/**',
       'allure-results/**',
-      'allure-report/**'],
+      'allure-report/**',
+      'performance/**'],
     languageOptions: { ecmaVersion: 2022, sourceType: 'commonjs' },
     rules: {
       'no-console': 'off',
