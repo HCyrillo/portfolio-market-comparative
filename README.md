@@ -251,24 +251,201 @@ npm run test:e2e
 
 ### Relatório Allure local
 
-Para gerar e abrir o relatório HTML dos testes com Allure localmente:
+Os relatórios Allure podem ser gerados localmente a partir das execuções automatizadas.
+
+Para executar toda a suíte com o reporter Allure:
 
 ```bash
-npm run test:api:allure
+npm run test:allure
+```
+
+Esse comando gera os arquivos brutos em:
+
+```text
+allure-results/
+```
+
+Depois, gere o relatório HTML:
+
+```bash
 npm run allure:generate
+```
+
+O relatório será criado em:
+
+```text
+allure-report/
+```
+
+Para abrir o relatório no navegador:
+
+```bash
 npm run allure:open
 ```
 
-Também é possível gerar o relatório para integração e E2E:
+No Windows PowerShell, caso a política de execução bloqueie o `npx.ps1`, utilize:
+
+```powershell
+npx.cmd allure open allure-report
+```
+
+Também é possível executar apenas um nível específico com Allure:
 
 ```bash
+npm run test:unit:allure
 npm run test:integration:allure
+npm run test:api:allure
 npm run test:e2e:allure
+```
+
+Após executar o nível desejado:
+
+```bash
 npm run allure:generate
 npm run allure:open
 ```
 
-O comando `allure:generate` cria a pasta `allure-report` com o HTML do relatório, e `allure:open` abre a interface no navegador padrão.
+> Antes de uma nova execução, o script `test:allure` deve limpar `allure-results` para evitar mistura de resultados de execuções anteriores.
+
+---
+
+### Abrir o relatório gerado pelo CI no GitHub Actions
+
+O workflow de CI gera os seguintes artifacts quando aplicável:
+
+```text
+allure-results
+allure-report
+coverage-report
+```
+
+Para consultar o relatório após uma execução do GitHub Actions:
+
+1. Acesse a aba **Actions** do repositório.
+2. Abra a execução desejada do workflow **CI**.
+3. Na seção **Artifacts**, baixe:
+
+```text
+allure-report
+```
+
+4. Extraia o `.zip` para uma pasta local.
+
+Exemplo:
+
+```text
+C:\Users\SeuUsuario\Downloads\allure-report
+```
+
+5. Abra o **CMD** ou PowerShell nessa pasta.
+
+No CMD:
+
+```cmd
+npx allure open .
+```
+
+No PowerShell, se houver bloqueio de `npx.ps1`:
+
+```powershell
+npx.cmd allure open .
+```
+
+Também é possível apontar diretamente para a pasta extraída:
+
+```cmd
+npx allure open C:\Users\SeuUsuario\Downloads\allure-report
+```
+
+ou no PowerShell:
+
+```powershell
+npx.cmd allure open C:\Users\SeuUsuario\Downloads\allure-report
+```
+
+O Allure iniciará um servidor HTTP local e abrirá o relatório no navegador.
+
+Esse comando deve ser utilizado apenas localmente. No GitHub Actions, o workflow deve somente gerar e publicar o relatório como artifact, sem executar `allure open` ou `allure serve`.
+
+---
+
+### Diferença entre `allure-results` e `allure-report`
+
+```text
+Testes automatizados
+        ↓
+allure-results/
+        ↓
+allure generate
+        ↓
+allure-report/
+        ↓
+Visualização no navegador
+```
+
+- `allure-results/`: contém os resultados brutos produzidos durante a execução.
+- `allure-report/`: contém o relatório HTML processado e pronto para visualização.
+
+Para apenas consultar uma execução do CI, baixe preferencialmente `allure-report`.
+
+O artifact `allure-results` é útil quando for necessário regenerar o relatório localmente.
+
+Exemplo no CMD:
+
+```cmd
+npx allure generate allure-results --clean -o allure-report
+npx allure open allure-report
+```
+
+No PowerShell:
+
+```powershell
+npx.cmd allure generate allure-results --clean -o allure-report
+npx.cmd allure open allure-report
+```
+
+---
+
+### Evidências no Allure
+
+Os testes de **API** e **E2E** podem anexar evidências diretamente ao relatório.
+
+As evidências podem incluir:
+
+```text
+Request
+├── Method
+├── URL
+├── Query
+└── Body
+
+Response
+├── Status
+└── Body
+```
+
+A coleta é centralizada em:
+
+```text
+test/helpers/evidence.js
+```
+
+Isso facilita a rastreabilidade entre risco, cenário, teste e resultado.
+
+Exemplo:
+
+```text
+RSK-003
+   ↓
+TS-PRD-002
+   ↓
+products.api.test.js
+   ↓
+API Evidence
+   ↓
+DEF-004
+```
+
 
 Os testes E2E são intencionalmente reduzidos e cobrem principalmente o fluxo:
 
