@@ -5,32 +5,24 @@
   "main": "src/server.js",
   "scripts": {
     "prepare": "husky install",
-
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-
     "test": "npm run test:unit && npm run test:integration && npm run test:api && npm run test:e2e",
-
     "test:unit": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/unit --reporter spec",
     "test:integration": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/integration --reporter spec",
     "test:api": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/api --reporter spec",
     "test:e2e": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/e2e --reporter spec",
-
     "test:unit:allure": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/unit --reporter allure-mocha",
     "test:integration:allure": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/integration --reporter allure-mocha",
     "test:api:allure": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/api --reporter allure-mocha",
     "test:e2e:allure": "mocha --require test/helpers/mocha.setup.js --recursive --exit test/e2e --reporter allure-mocha",
-
     "test:allure": "npm run test:unit:allure && npm run test:integration:allure && npm run test:api:allure && npm run test:e2e:allure",
-
     "coverage": "nyc --reporter=lcov --reporter=text npm run test:unit",
-
     "allure:generate": "npx allure generate allure-results --clean -o allure-report",
     "allure:open": "npx allure open allure-report",
-
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
-},
+  },
   "engines": {
     "node": ">=18"
   },
@@ -42,16 +34,16 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "eslint": "^9.17.0",
-    "nodemon": "^3.1.9",
-    "supertest": "^7.2.2",
-    "mocha": "^10.2.0",
+    "allure-commandline": "^2.22.0",
+    "allure-mocha": "^3.10.2",
     "chai": "^4.3.8",
     "chai-as-promised": "^7.1.1",
-    "nyc": "^15.1.0",
-    "husky": "^8.0.0",
     "cross-env": "^7.0.3",
-    "mocha-allure-reporter": "^1.3.0",
-    "allure-commandline": "^2.22.0"
+    "eslint": "^9.17.0",
+    "husky": "^8.0.0",
+    "mocha": "^10.2.0",
+    "nodemon": "^3.1.9",
+    "nyc": "^15.1.0",
+    "supertest": "^7.2.2"
   }
 }
