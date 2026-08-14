@@ -15,7 +15,7 @@ Preparação
 - Usar diretório de dados temporário e reproduzir sequências de gravação.
 - Simular atualizações rápidas (em loop) e leituras imediatas.
 
-Ações (exemplos)
+Ações (exemplos) 
 -----------------
 - Fazer N atualizações de preço em sequência e validar histórico final.
 - Tornar produto indisponível após cadastrar preços e verificar se preços são preservados.

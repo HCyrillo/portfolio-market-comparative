@@ -37,4 +37,13 @@ Critério de saída
 
 Observações
 -----------
-Documentar qualquer comportamento indefinido e transformar em casos de teste automatizados (`test/integration/` ou `test/e2e/`) quando reproduzível.
+Produtos
+ - Não há validação e minimo de caracteres para o produto, possibilitando salvar produtos com apenas uma letra, e sem DELETE deixa não usual a aplicação
+ -é possivel cadastrar produtos repetidos com os mesmos dados, isso é um bug
+Consulta produto deveria ser paginado para melhor performance
+Preço
+- a consulta deveria ser paginada também
+- consulta de preço deveria retornar um id unico para ter um registro mapeado de preço para cada mercado-produto, fica confuso a atualização de preço sem o id retornado dessa relação
+- produto deveria vir acompanhado da moeda (Reais)
+Comparação
+- formatar valores para vir formatado em reais 
