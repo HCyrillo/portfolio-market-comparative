@@ -2,6 +2,7 @@ const request = require('supertest');
 const { expect } = require('chai');
 const { createApp } = require('../../src/app');
 const { seedToDir, removeDataDirectory } = require('../helpers/fixtures');
+const { logEvidence } = require('../helpers/evidence');
 
 describe('Comparison critical flow E2E', () => {
   let directory;
@@ -39,6 +40,13 @@ describe('Comparison critical flow E2E', () => {
       saving: 0.6
     });
     expect(response.body.metadata.timestamp).to.match(/^\d{4}-\d{2}-\d{2}T/);
+
+    logEvidence('[TS-E2E-001][RSK-001] executa produto → preços → comparação', {
+      method: 'GET',
+      url: '/api/v1/comparison',
+      query: { originMarketId: 1, targetMarketId: 2, productId: product.id },
+      response: { status: response.status, statusText: response.statusText, body: response.body }
+    });
   });
 
   it('[TS-E2E-003][RSK-004][RSK-001] usa preço atualizado em nova comparação', async () => {
@@ -56,6 +64,13 @@ describe('Comparison critical flow E2E', () => {
 
     expect(response.body.data.bestPrice.marketId).to.equal(2);
     expect(response.body.data.bestPrice.saving).to.equal(0.5);
+
+    logEvidence('[TS-E2E-003][RSK-004][RSK-001] usa preço atualizado em nova comparação', {
+      method: 'GET',
+      url: '/api/v1/comparison',
+      query: { originMarketId: 1, targetMarketId: 2, productId: product.id },
+      response: { status: response.status, statusText: response.statusText, body: response.body }
+    });
   });
 
   it('[TS-E2E-002][RSK-005] impede comparação após desativar o produto', async () => {
@@ -71,6 +86,13 @@ describe('Comparison critical flow E2E', () => {
       .expect(400);
 
     expect(response.body.message).to.match(/indisponível/);
+
+    logEvidence('[TS-E2E-002][RSK-005] impede comparação após desativar o produto', {
+      method: 'GET',
+      url: '/api/v1/comparison',
+      query: { originMarketId: 1, targetMarketId: 2, productId: product.id },
+      response: { status: response.status, statusText: response.statusText, body: response.body }
+    });
   });
 
   it('[TS-E2E-004][RSK-002] impede comparação quando somente um mercado possui preço', async () => {
@@ -82,5 +104,12 @@ describe('Comparison critical flow E2E', () => {
       .expect(422);
 
     expect(response.body.message).to.match(/Mercado B não possui preço/);
+
+    logEvidence('[TS-E2E-004][RSK-002] impede comparação quando somente um mercado possui preço', {
+      method: 'GET',
+      url: '/api/v1/comparison',
+      query: { originMarketId: 1, targetMarketId: 2, productId: product.id },
+      response: { status: response.status, statusText: response.statusText, body: response.body }
+    });
   });
 });
